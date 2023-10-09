@@ -16,9 +16,9 @@ export const ShowCounter = ({days, hours, minutes, seconds}: PropType) => {
 			<p className = "pl-3 pr-3">:</p>
 			<DateTimeDisplay value = {hours} type={"Hours"} isDanger={false} />
 			<p className = "pl-3 pr-3">:</p>
-			<DateTimeDisplay value = {minutes} type={"Minutes"} isDanger={minutes <= 1} />
+			<DateTimeDisplay value = {minutes} type={"Minutes"} isDanger={minutes <= 1}/>
 			<p className = "pl-3 pr-3">:</p>
-			<DateTimeDisplay value = {seconds} type={"Seconds"} isDanger={false} />
+			<DateTimeDisplay value = {seconds} type={"Seconds"} isDanger={minutes <= 1} />
 		</div>
 	)
 }

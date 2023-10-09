@@ -8,7 +8,7 @@ type PropType = {
 
 export const DateTimeDisplay = ({value, type, isDanger}: PropType) => {
 	return (
-		<div>
+		<div className = {isDanger ? "text-red-500" : "text-current"}>
 			<p>{value}</p>	
 			<span className = "font-bold">{type}</span>
 		</div>
