@@ -1,9 +1,8 @@
 import React from 'react';
 import './App.css';
 import { CountDown } from "./countdown-timer/components/CountDown"
-import Counter from "./tic-tac-toe/components/Counter"
 import Board from "./tic-tac-toe/components/Board"
-import { Link, BrowserRouter as Router, Route, Routes, useMatch, useResolvedPath } from "react-router-dom"
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import { Home } from "./home/Home" 
 
 function App() {

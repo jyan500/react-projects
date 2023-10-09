@@ -22,7 +22,7 @@ export const checkGameState = (
 	j: number, 
 	marker: string
 ) => {
-	const directions = {"horizontal":[[0, 1], [0, -1]], "vertical": [[1, 0], [-1, 0]], "diagonal1": [[1, 1], [-1, -1]], "diagonal2": [[-1, 1], [1, -1]]}
+	const directions: Record<string, Array<Array<number>>> = {"horizontal":[[0, 1], [0, -1]], "vertical": [[1, 0], [-1, 0]], "diagonal1": [[1, 1], [-1, -1]], "diagonal2": [[-1, 1], [1, -1]]}
 	for (const key of Object.keys(directions)){
 		let directionContainsMultiple = []
 		for (const d of directions[key]){
