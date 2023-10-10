@@ -1,8 +1,5 @@
 import { CellPayload } from "../types/common" 
 
-export type iCounterAction = 
-	{ type: "INCREMENT"} | { type: "DECREMENT"}
-
 export type iFillCellAction = {
 	type: "FILL_CELL"
 	payload: Record<string, any>
@@ -20,14 +17,6 @@ export type iCheckGameStateAction = {
 	type: "CHECK_GAME_STATE",
 	payload: Record<string, any>
 }
-
-export const increment = (): iCounterAction => ({
-	type: "INCREMENT"
-})
-
-export const decrement = (): iCounterAction => ({
-	type: "DECREMENT"
-})
 
 export const fillCell = (payload: CellPayload): iFillCellAction => ({
 	type: "FILL_CELL",
