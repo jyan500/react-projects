@@ -44,7 +44,6 @@ export const checkGameState = (
 		if (directionContainsMultiple.length && directionContainsMultiple.length === width - 1 && directionContainsMultiple.every((val) => val)){
 			// include i,j in the winning cells
 			directionContainsMultiple.push([i, j])
-			console.log("directionContainsMultiple: ", directionContainsMultiple)
 			return [true, directionContainsMultiple]
 		}
 	}
