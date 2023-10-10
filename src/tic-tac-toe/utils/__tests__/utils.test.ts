@@ -10,7 +10,11 @@ describe("checkGameState", () => {
 		let marker = "O"
 		let width = 3
 		let height = 3
-		expect(checkGameState(board, width, height, i, j, marker)).toEqual(true)
+		var [isVictory, winningCells] = checkGameState(board, width, height, i, j, marker)
+		expect(isVictory).toEqual(true)
+		expect(winningCells).toEqual(expect.arrayContaining([
+			[0, 0], [1, 1], [2, 2]
+		]))
 
 		board = [
 			["O", "O", "O"], ["X", "X", "O"], ["*", "*", "*"]
@@ -18,7 +22,11 @@ describe("checkGameState", () => {
 		i = 0
 		j = 1
 		marker = "O"
-		expect(checkGameState(board, width, height, i, j, marker)).toEqual(true)
+	    var [isVictory, winningCells] = checkGameState(board, width, height, i, j, marker)
+		expect(isVictory).toEqual(true)
+		expect(winningCells).toEqual(expect.arrayContaining([
+			[0, 0], [0, 1], [0, 2]
+		]))
 
 	})	
 	it("returns false if multiple markers are not in a row", () => {
@@ -30,7 +38,7 @@ describe("checkGameState", () => {
 		let marker = "X"
 		let width = 3
 		let height = 3
-		expect(checkGameState(board, width, height, i, j, marker)).toEqual(false)
+		expect(checkGameState(board, width, height, i, j, marker)).toEqual([false, []])
 
 		board = [
 			["X", "O", "O"], ["O", "O", "X"], ["X", "X", "O"]
@@ -38,7 +46,7 @@ describe("checkGameState", () => {
 		i = 1 
 		j = 1 
 		marker = "O"
-		expect(checkGameState(board, width, height, i, j, marker)).toEqual(false)
+		expect(checkGameState(board, width, height, i, j, marker)).toEqual([false, []])
 
 		board = [
 			["*", "O", "*"],
@@ -48,7 +56,7 @@ describe("checkGameState", () => {
 		marker = "O"
 		i = 1
 		j = 2
-		expect(checkGameState(board, width, height, i, j, marker)).toEqual(false)
+		expect(checkGameState(board, width, height, i, j, marker)).toEqual([false, []])
 	})
 })
 

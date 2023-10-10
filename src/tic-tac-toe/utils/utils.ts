@@ -33,17 +33,22 @@ export const checkGameState = (
 				newX = newX + x
 				newY = newY + y
 				if (inBounds(width, height, newX, newY)){
-					directionContainsMultiple.push(board[newX][newY] === marker)
+					if (board[newX][newY] === marker){
+						directionContainsMultiple.push([newX, newY])
+					}
 				}
 			}
 		}
 		// check to make sure it contains at least (width - 1) amount of markers in the array,
 		// as the checks do not contain the cell i,j itself
 		if (directionContainsMultiple.length && directionContainsMultiple.length === width - 1 && directionContainsMultiple.every((val) => val)){
-			return true
+			// include i,j in the winning cells
+			directionContainsMultiple.push([i, j])
+			console.log("directionContainsMultiple: ", directionContainsMultiple)
+			return [true, directionContainsMultiple]
 		}
 	}
-	return false
+	return [false, []]
 }
 
 /**

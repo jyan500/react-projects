@@ -7,7 +7,8 @@ const initialState = {
 	currentTurn: 1,
 	board: [["*", "*", "*"], ["*", "*", "*"], ["*", "*", "*"]],
 	markers: {1: "O", 2: "X"},
-	result: ""
+	result: "",
+	winningCells: []
 }
 
 export const gameReducer = (state = initialState, action: any) => {
@@ -38,9 +39,9 @@ export const gameReducer = (state = initialState, action: any) => {
 		}
 		case "CHECK_GAME_STATE": {
 			const { value, rowIndex: i, colIndex: j } = action.payload
-			const gameWon = checkGameState(state.board, state.width, state.height, i, j, value)
+			const [isVictory, winningCells] = checkGameState(state.board, state.width, state.height, i, j, value)
 			// if there's no winner, and the board is full, this is a tie
-			if (!gameWon){
+			if (!isVictory){
 				if (checkFullBoard(state.board, state.width, state.height)){
 					return {
 						...state,
@@ -51,6 +52,7 @@ export const gameReducer = (state = initialState, action: any) => {
 			else {
 				return {
 					...state,
+					winningCells: winningCells,
 					result: state.currentTurn === 1 ? "Player 1 Wins" : "Player 2 Wins"
 				}
 			}
@@ -61,13 +63,10 @@ export const gameReducer = (state = initialState, action: any) => {
 				...state,
 				currentTurn: 1,
 				result: "",
+				winningCells: [],
 				board: [["*", "*", "*"], ["*", "*", "*"], ["*", "*", "*"]],
 			}
 		}
-		default: {
-			return state
-		}
-
 	}
 	return state
 }

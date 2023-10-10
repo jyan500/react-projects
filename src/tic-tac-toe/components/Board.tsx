@@ -9,6 +9,7 @@ type StateProps = {
 	width: number
 	height: number
 	board: Array<Array<string>>
+	winningCells: Array<Array<number>>
 }
 
 type DispatchProps = {
@@ -28,10 +29,14 @@ const Board: React.FC<Props> = (props) => {
 					props.board.map((row, rowIndex) => (
 						<div key = {"r-" + rowIndex}>
 							{row.map((cell, colIndex) => {
+								let bgColor = "bg-gray-100"
+								if (props.winningCells.length && props.winningCells.find((cell) => cell[0] === rowIndex && cell[1] === colIndex)){
+									bgColor = "bg-green-300"
+								}
 								return (
 									<Cell 
 										key = {"c-" + colIndex} 
-										className={`${colIndex !== props.height - 1 ? "border-b-4" : ""} ${rowIndex !== props.width - 1 ? "border-r-4" : ""} w-40 h-40 flex justify-center items-center`}
+										className={`${bgColor} ${colIndex !== props.height - 1 ? "border-b-4" : ""} ${rowIndex !== props.width - 1 ? "border-r-4" : ""} w-40 h-40 flex justify-center items-center`}
 										value = {cell !== "*" ? cell : ""}
 										rowIndex = {rowIndex}
 										colIndex = {colIndex} 
@@ -48,11 +53,12 @@ const Board: React.FC<Props> = (props) => {
 const mapStateToProps = (state: any) => ({
 	width: state.game.width,
 	height: state.game.height,
-	board: state.game.board
+	board: state.game.board,
+	winningCells: state.game.winningCells
 })
 
 const mapDispatchToProps = {
-	resetBoard
+	resetBoard,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board)
