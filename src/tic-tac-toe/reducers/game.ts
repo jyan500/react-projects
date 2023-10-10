@@ -1,15 +1,18 @@
+import { checkGameState, checkFullBoard } from "../utils/utils"
+
 const initialState = {
 	width: 3,
 	height: 3,
 	numPlayers: 2,
 	currentTurn: 1,
 	board: [["*", "*", "*"], ["*", "*", "*"], ["*", "*", "*"]],
-	markers: {1: "O", 2: "X"}
+	markers: {1: "O", 2: "X"},
+	result: ""
 }
 
 export const gameReducer = (state = initialState, action: any) => {
 	switch (action.type){
-		case "FILL_CELL":
+		case "FILL_CELL": {
 			const { value, rowIndex: i, colIndex: j} = action.payload
 			return {
 				...state,
@@ -26,17 +29,44 @@ export const gameReducer = (state = initialState, action: any) => {
 					return row
 				})
 			}
-		case "SWITCH_ACTION":
+		}
+		case "SWITCH_ACTION": {
 			return {
 				...state,
 				currentTurn: state.currentTurn === 1 ? 2 : 1
 			}
-
-		case "RESET_BOARD":
+		}
+		case "CHECK_GAME_STATE": {
+			const { value, rowIndex: i, colIndex: j } = action.payload
+			const gameWon = checkGameState(state.board, state.width, state.height, i, j, value)
+			// if there's no winner, and the board is full, this is a tie
+			if (!gameWon){
+				if (checkFullBoard(state.board, state.width, state.height)){
+					return {
+						...state,
+						result: "Tie"
+					}	
+				}
+			}
+			else {
+				return {
+					...state,
+					result: state.currentTurn === 1 ? "Player 1 Wins" : "Player 2 Wins"
+				}
+			}
+			return state
+		}
+		case "RESET_BOARD": {
 			return {
 				...state,
+				currentTurn: 1,
+				result: "",
 				board: [["*", "*", "*"], ["*", "*", "*"], ["*", "*", "*"]],
 			}
+		}
+		default: {
+			return state
+		}
 
 	}
 	return state

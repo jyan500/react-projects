@@ -37,9 +37,29 @@ export const checkGameState = (
 				}
 			}
 		}
-		if (directionContainsMultiple.length && directionContainsMultiple.every((val) => val)){
+		// check to make sure it contains at least (width - 1) amount of markers in the array,
+		// as the checks do not contain the cell i,j itself
+		if (directionContainsMultiple.length && directionContainsMultiple.length === width - 1 && directionContainsMultiple.every((val) => val)){
 			return true
 		}
 	}
 	return false
+}
+
+/**
+ * Returns true if all cells in the board are filled
+ */
+export const checkFullBoard = (
+	board: Array<Array<string>>,
+	width: number,
+	height: number
+) => {
+	for (let i = 0; i < height; ++i){
+		for (let j = 0; j < width; ++j){
+			if (board[i][j] === "*"){
+				return false
+			}
+		}
+	}
+	return true
 }

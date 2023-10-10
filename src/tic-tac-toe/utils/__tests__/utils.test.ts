@@ -1,4 +1,4 @@
-import { inBounds, checkGameState } from "../utils" 
+import { inBounds, checkGameState, checkFullBoard } from "../utils" 
 
 describe("checkGameState", () => {
 	it("returns true if there are multiple markers in a row", () => {
@@ -39,6 +39,16 @@ describe("checkGameState", () => {
 		j = 1 
 		marker = "O"
 		expect(checkGameState(board, width, height, i, j, marker)).toEqual(false)
+
+		board = [
+			["*", "O", "*"],
+			["*", "X", "O"],
+			["*", "*", "*"]
+		]
+		marker = "O"
+		i = 1
+		j = 2
+		expect(checkGameState(board, width, height, i, j, marker)).toEqual(false)
 	})
 })
 
@@ -49,5 +59,21 @@ describe("inBounds", () => {
 		let width = 3
 		let height = 3
 		expect(inBounds(width, height, i, j)).toEqual(true)
+	})
+})
+
+describe("checkFullBoard", () => {
+	it("returns true if the board is full", () => {
+		let board = [
+			["X", "O", "O"], ["O", "O", "X"], ["O", "X", "O"]
+		]
+		let height = 3
+		let width = 3
+		expect(checkFullBoard(board, width, height)).toEqual(true)
+
+		board = [
+			["X", "O", "O"], ["O", "O", "X"], ["O", "*", "*"]
+		]
+		expect(checkFullBoard(board, width, height)).toEqual(false)
 	})
 })

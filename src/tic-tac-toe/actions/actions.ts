@@ -16,6 +16,11 @@ export type iResetBoardAction = {
 	type: "RESET_BOARD"
 }
 
+export type iCheckGameStateAction = {
+	type: "CHECK_GAME_STATE",
+	payload: Record<string, any>
+}
+
 export const increment = (): iCounterAction => ({
 	type: "INCREMENT"
 })
@@ -35,4 +40,9 @@ export const switchPlayer = (): iSwitchPlayerAction => ({
 
 export const resetBoard = (): iResetBoardAction => ({
 	type: "RESET_BOARD",
+})
+
+export const checkGameState = (payload: CellPayload): iCheckGameStateAction => ({
+	type: "CHECK_GAME_STATE",
+	payload
 })
