@@ -40,6 +40,7 @@ export const Weather = () => {
 			<div className = "side-column"></div>
 			<div className = "middle-column">
 				<h1 className = "jumbotron l-text">Weather App</h1>
+				<p className = "s-text">Sourced From api.weather.gov</p>
 				<SearchBar onSearch={onSearch}/>
 				{forecast.length !== 0 && (<p className = "l-text">7 Day Forecast</p>)}
 				{loading && (<div><p className = "s-text">Loading...</p></div>)}
