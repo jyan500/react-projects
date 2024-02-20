@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import { Home } from "./home/Home" 
 import { Notes } from "./notes/components/Notes" 
 import { Gallery } from "./gallery/components/Gallery"
+import { Weather } from "./weather/components/Weather"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path = "/tic-tac-toe" element={<Board/>}></Route>
               <Route path = "/notes" element={<Notes/>}></Route>
               <Route path = "/gallery" element = {<Gallery/>}></Route>
+              <Route path = "/weather" element = {<Weather/>}></Route>
             </Routes>
           </div>
         </div>

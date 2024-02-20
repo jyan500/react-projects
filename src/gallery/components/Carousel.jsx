@@ -7,8 +7,6 @@ import { GrNext } from "react-icons/gr";
 
 export const Carousel = ({players, setShowCarousel}) => {
 	const [page, setPage] = useState(0)
-	console.log("page: ", page)
-	console.log("players[page]: ", players[page])
 	const onNext = () => {
 		if (page < players.length){
 			setPage(page+1)
@@ -24,7 +22,7 @@ export const Carousel = ({players, setShowCarousel}) => {
 			<div className = "carousel-container">
 				<button onClick={() => setShowCarousel(false)} ><IoMdClose className = "close-button m-text"/></button>
 				<div className = "carousel">
-					<button onClick={onPrev}><GrPrevious/></button>	
+					<button disabled = {page === 0} onClick={onPrev}><GrPrevious/></button>	
 					<div className = "carousel-content">
 						<div className = "carousel-image">
 							<img src = {players[page].url}/>
@@ -34,7 +32,7 @@ export const Carousel = ({players, setShowCarousel}) => {
 							<ul>{players[page].description.map((text) => <li>{text}</li>)}</ul>
 						</div>
 					</div>
-					<button onClick={onNext}><GrNext/></button>
+					<button disabled = {page === players.length-1} onClick={onNext}><GrNext/></button>
 				</div>
 			</div>
 		</div>

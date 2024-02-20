@@ -8,6 +8,7 @@ export const Home = () => {
 			<Link className = "p-2" to = "/tic-tac-toe">Tic Tac Toe</Link>	
 			<Link className = "p-2" to = "/notes">Notes</Link>	
 			<Link className = "p-2" to = "/gallery">Gallery</Link>	
+			<Link className = "p-2" to = "/weather">Weather</Link>	
 		</div>
 	)
 }
