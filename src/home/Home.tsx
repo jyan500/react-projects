@@ -9,6 +9,8 @@ export const Home = () => {
 			<Link className = "p-2" to = "/notes">Notes</Link>	
 			<Link className = "p-2" to = "/gallery">Gallery</Link>	
 			<Link className = "p-2" to = "/weather">Weather</Link>	
+			<Link className = "p-2" to = "/shapes">Shapes</Link>	
+			<Link className = "p-2" to = "/kanban-board">Kanban Board</Link>	
 		</div>
 	)
 }

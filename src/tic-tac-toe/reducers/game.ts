@@ -1,6 +1,18 @@
 import { checkGameState, checkFullBoard } from "../utils/utils"
+import { createSlice } from "@reduxjs/toolkit" 
 
-const initialState = {
+interface BoardState {
+	width: number
+	height: number
+	numPlayers: number
+	currentTurn: number
+	board: Array<Array<string>>
+	markers: Record<string, any>
+	result: string
+	winningCells: boolean | number[][]
+}
+
+const initialState: BoardState = {
 	width: 3,
 	height: 3,
 	numPlayers: 2,

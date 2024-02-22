@@ -7,6 +7,8 @@ import { Home } from "./home/Home"
 import { Notes } from "./notes/components/Notes" 
 import { Gallery } from "./gallery/components/Gallery"
 import { Weather } from "./weather/components/Weather"
+import { Shapes } from "./shapes/Shapes" 
+import { Board as KanbanBoard } from "./kanban-board/components/Board" 
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
               <Route path = "/notes" element={<Notes/>}></Route>
               <Route path = "/gallery" element = {<Gallery/>}></Route>
               <Route path = "/weather" element = {<Weather/>}></Route>
+              <Route path = "/shapes" element = {<Shapes/>}></Route>
+              <Route path = "/kanban-board" element ={<KanbanBoard/>}></Route>
             </Routes>
           </div>
         </div>

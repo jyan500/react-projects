@@ -1,7 +1,17 @@
 import { createStore } from "redux"
-import rootReducer from "./reducers"
+import { configureStore } from "@reduxjs/toolkit" 
+import { boardReducer } from "./kanban-board/slices/boardSlice" 
+import { gameReducer } from "./tic-tac-toe/reducers/game" 
 
-const store = createStore(rootReducer)
+export const store = configureStore({
+	reducer: {
+		"game": gameReducer,
+		"board": boardReducer,
+	},
+})
 
-export default store
+// Infer the 'RootState' and 'AppDispatch' types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
 
