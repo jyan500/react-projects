@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import "../styles/Gallery.css"
 import { activePlayers, retiredPlayers } from "../mockData"
 import { Carousel } from "./Carousel" 
+import "../../common/styles/common.css" 
 
 export const Gallery = () => {
 	const [showCarousel, setShowCarousel] = useState(false)	

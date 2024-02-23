@@ -40,18 +40,6 @@
 	font-weight: bold;
 }
 
-.s-text {
-	font-size: 16px;
-}
-
-.m-text{
-	font-size: 24px;
-}
-
-.l-text {
-	font-size: 36px;
-}
-
 .panel {
 	display: flex;
 	flex-direction: column;
@@ -60,12 +48,5 @@
 
 .panel img {
 	border-radius: 50%;
-}
-
-.btn {
-	border: 1px solid blue;
-	background-color: blue;
-	color: white;
-	padding: 8px;
 }
 

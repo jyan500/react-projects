@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import { SearchBar } from "./SearchBar"
 import { WeatherPanel } from "./WeatherPanel"
 import "../styles/Weather.css"
+import "../../common/styles/common.css"
 
 export const Weather = () => {
 	const url = "https://api.weather.gov/points/"

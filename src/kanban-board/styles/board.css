@@ -1,3 +1,14 @@
-.board-container {
-	display: grid;
+table {
+	border-collapse: collapse;
+	border: 1px solid black;
+	table-layout: fixed;
+	width: 100%;
+}
+
+thead {
+	border: 1px solid black;
+}
+
+td {
+	padding: 32px;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import "../styles/SearchBar.css" 
 import "../styles/Weather.css"
+import "../../common/styles/common.css"
 import { latlong } from "../constants"
 
 export const SearchBar = ({onSearch}) => {

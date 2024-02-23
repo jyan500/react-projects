@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import "../styles/Carousel.css" 
+import "../../common/styles/modal.css"
 import "../styles/Gallery.css"
 import { IoMdClose } from "react-icons/io";
 import { GrPrevious } from "react-icons/gr";
@@ -18,12 +19,12 @@ export const Carousel = ({players, setShowCarousel}) => {
 		}
 	}
 	return (
-		<div className = "modal-container">
-			<div className = "carousel-container">
+		<div className = "overlay">
+			<div className = "modal-container">
 				<button onClick={() => setShowCarousel(false)} ><IoMdClose className = "close-button m-text"/></button>
-				<div className = "carousel">
+				<div className = "modal">
 					<button disabled = {page === 0} onClick={onPrev}><GrPrevious/></button>	
-					<div className = "carousel-content">
+					<div className = "modal-content">
 						<div className = "carousel-image">
 							<img src = {players[page].url}/>
 						</div>
