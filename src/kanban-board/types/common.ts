@@ -5,7 +5,7 @@ export interface Priority {
 }
 
 export interface Ticket {
-	id: string 
+	id: string
 	priority: Priority
 	ticketName: string
 	ticketDescription: string

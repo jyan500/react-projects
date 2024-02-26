@@ -58,9 +58,19 @@ export const boardSlice = createSlice({
 			if (rowNum != null && colNum != null){
 				state.board[rowNum][colNum].ticket = action.payload
 			}
+		},
+		editTicket(state, action: PayloadAction<Ticket>){
+			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
+			// edit the ticket within the tickets list
+			state.tickets[ticketIndex] = action.payload
+			const colNum = state.currentCell?.colNum
+			const rowNum = state.currentCell?.rowNum
+			if (rowNum != null && colNum != null){
+				state.board[rowNum][colNum].ticket = action.payload	
+			}
 		}
 	}
 })
 
-export const { addTicketToBoard, selectCurrentCell, toggleShowModal } = boardSlice.actions
+export const { addTicketToBoard, editTicket, selectCurrentCell, toggleShowModal } = boardSlice.actions
 export const boardReducer = boardSlice.reducer 
