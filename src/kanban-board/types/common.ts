@@ -9,6 +9,7 @@ export interface Ticket {
 	priority: Priority
 	ticketName: string
 	ticketDescription: string
+	ticketStatus: Status
 }
 
 export interface Cell {

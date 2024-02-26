@@ -1,17 +1,31 @@
 import React, { useState } from "react"
 import "../../common/styles/common.css" 
 import { useAppDispatch, useAppSelector } from "../../redux-hooks"
+import { addTicketToBoard, toggleShowModal } from "../slices/boardSlice"
+import { v4 as uuidv4 } from "uuid" 
 
 export const TicketForm = () => {
 	const [form, setForm] = useState({
 		ticketName: "",
 		ticketDescription: "",
-		priority: "" 
+		priority: "",
+		// default TODO
+		ticketStatus: "1"
 	})
 	const dispatch = useAppDispatch()
 	const board = useAppSelector((state) => state.board)
 	const onSubmit = () => {
-
+		const status = board.statuses.find((status) => status.id === form.ticketStatus)
+		const priority = board.priorityList.find((priority) => priority.id === form.priority)
+		if (priority && status){
+			dispatch(addTicketToBoard({
+				...form,
+				id: uuidv4(),
+				priority: priority,
+				ticketStatus: status
+			}))
+			dispatch(toggleShowModal(false))
+		}
 	}
 	return (
 		<div className = "container">
@@ -29,7 +43,8 @@ export const TicketForm = () => {
 				</div>
 				<div className = "form-input">
 					<label className = "">Priority</label>
-					<select onChange = {(e) => setForm({...form, priority: e.target.value})}>
+					<select value = {form.priority} onChange = {(e) => setForm({...form, priority: e.target.value})}>
+						<option disabled value = "">---</option>
 						{board.priorityList.map((priority) => {
 							return <option key = {priority.id} value = {priority.id}>{priority.name}</option>
 						})}

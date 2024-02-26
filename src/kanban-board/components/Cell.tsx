@@ -13,7 +13,7 @@ export const Cell = ({cell}: PropType) => {
 	const dispatch = useAppDispatch()
 	return (
 		<div>
-			{cell.ticket ? <Ticket/> : <div className = "empty cell" onClick={() => {
+			{cell.ticket ? <Ticket ticket={cell.ticket}/> : <div className = "empty cell" onClick={() => {
 				dispatch(toggleShowModal(true))
 				dispatch(selectCurrentCell(cell))
 			}}>

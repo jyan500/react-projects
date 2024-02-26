@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { setupInitialBoard } from "../helpers/functions" 
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
-import type { Cell, Board, Priority, Status } from "../types/common" 
+import type { Cell, Board, Priority, Status, Ticket } from "../types/common" 
 
 interface BoardState {
 	board: Cell[][]
@@ -13,6 +13,7 @@ interface BoardState {
 	priorityList: Array<Priority>
 	showModal: boolean
 	currentCell: Cell | null
+	tickets: Array<Ticket>
 }
 
 const initialState: BoardState = {
@@ -34,6 +35,7 @@ const initialState: BoardState = {
 		{id: "2", name: "Medium", order: 2},
 		{id: "3", name: "Low", order: 3},
 	],
+	tickets: [],
 	showModal: false,
 	currentCell: null
 }
@@ -47,9 +49,18 @@ export const boardSlice = createSlice({
 		},
 		selectCurrentCell(state, action: PayloadAction<Cell | null>){
 			state.currentCell = action.payload
+		},
+		addTicketToBoard(state, action: PayloadAction<Ticket>){
+			state.tickets.push(action.payload)
+			// add ticket to the board
+			const colNum = state.currentCell?.colNum
+			const rowNum = state.currentCell?.rowNum
+			if (rowNum != null && colNum != null){
+				state.board[rowNum][colNum].ticket = action.payload
+			}
 		}
 	}
 })
 
-export const { selectCurrentCell, toggleShowModal } = boardSlice.actions
+export const { addTicketToBoard, selectCurrentCell, toggleShowModal } = boardSlice.actions
 export const boardReducer = boardSlice.reducer 
