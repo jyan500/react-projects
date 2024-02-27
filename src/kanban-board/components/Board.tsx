@@ -1,5 +1,6 @@
 import React from "react"
 import { useAppSelector, useAppDispatch } from "../../redux-hooks" 
+import { toggleShowModal } from "../slices/boardSlice"
 import { Cell } from "./Cell" 
 import "../../common/styles/common.css" 
 import "../styles/board.css"
@@ -11,6 +12,7 @@ export const Board = () => {
 	const dispatch = useAppDispatch()
 	return (
 		<div className = "board-container">
+			<button onClick = {() => dispatch(toggleShowModal(true))} className = "btn">Add Ticket</button>
 			<table>
 				<thead>
 					<tr>
@@ -31,7 +33,7 @@ export const Board = () => {
 					})}
 				</tbody>
 			</table>
-			{ board.showModal ? <Modal/> : null}
+			<Modal/>
 		</div>
 	)	
 }

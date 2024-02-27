@@ -5,10 +5,15 @@ table {
 	width: 100%;
 }
 
-thead {
+table thead {
 	border: 1px solid black;
 }
 
-td {
-	padding: 32px;
+table td {
+	padding: 0px;
+	border-right-width: 1px;
+	border-style: solid;
+	border-color: black;
+	word-wrap: break-word;
+	background-color: #D3D3D3;
 }

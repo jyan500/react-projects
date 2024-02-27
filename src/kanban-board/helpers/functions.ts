@@ -18,3 +18,18 @@ export const setupInitialBoard = (numRows: number, numCols: number) => {
 	}
 	return board
 }
+
+export const createNewRow = (rowNum: number, numCols: number) => {
+	let row: Cell[] = []
+	for (let i = 0; i < numCols; ++i){
+		const cell: Cell = {
+			id: uuidv4(),
+			rowNum: rowNum,
+			colNum: i, 
+			ticket: null
+		}	
+		row.push(cell)
+	}
+	return row
+
+}

@@ -1,5 +1,6 @@
 import React from "react"
 import "../../common/styles/common.css"
+import "../styles/ticket.css"
 import type { Ticket as TicketType } from "../types/common"
 
 type PropType = {
@@ -8,12 +9,11 @@ type PropType = {
 
 export const Ticket = ({ticket}: PropType) => {
 	return (
-		<div className = "container">
+		<div className = "ticket-card">
 			<div>
-				<p>{ticket.ticketName}</p>	
-				<p>{ticket.ticketDescription}</p>	
-				<p>{ticket.ticketStatus.name}</p>	
-				<p>{ticket.priority.name}</p>	
+				<p>Ticket: {ticket.ticketName}</p>	
+				<p>Status: {ticket.ticketStatus.name}</p>	
+				<p>Priority: {ticket.priority.name}</p>	
 			</div>
 		</div>
 	)	

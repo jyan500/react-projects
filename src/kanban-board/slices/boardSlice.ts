@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { setupInitialBoard } from "../helpers/functions" 
+import { createNewRow, setupInitialBoard } from "../helpers/functions" 
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
 import type { Cell, Board, Priority, Status, Ticket } from "../types/common" 
@@ -51,13 +51,38 @@ export const boardSlice = createSlice({
 			state.currentCell = action.payload
 		},
 		addTicketToBoard(state, action: PayloadAction<Ticket>){
-			state.tickets.push(action.payload)
-			// add ticket to the board
-			const colNum = state.currentCell?.colNum
-			const rowNum = state.currentCell?.rowNum
-			if (rowNum != null && colNum != null){
-				state.board[rowNum][colNum].ticket = action.payload
+			const { 
+				board, 
+				numCols,
+				numRows, 
+				statuses, 
+				statusesToDisplay, tickets 
+			} = state
+			tickets.push(action.payload)
+			// all tickets start as to-do, and should be added in the to-do column
+			// if it exists
+			const toDo = statuses.find(status => status.name === "To-Do")
+			if (toDo){
+				const toDoIndex = statusesToDisplay.indexOf(toDo.id)
+				// find the first available row in the todo column
+				let found = false
+				for (let i = 0; i < numRows; ++i){
+					if (!board[i][toDoIndex].ticket){
+						found = true
+						board[i][toDoIndex].ticket = action.payload
+						break
+					}
+				}
+				// if row is not found, add a new row
+				if (!found){
+					board.push(createNewRow(numRows, numCols))
+					// add the ticket to the new row
+					board[numRows][toDoIndex].ticket = action.payload
+					// increase the number of rows 
+					++state.numRows
+				}
 			}
+
 		},
 		editTicket(state, action: PayloadAction<Ticket>){
 			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
