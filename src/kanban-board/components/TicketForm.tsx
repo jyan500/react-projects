@@ -28,7 +28,10 @@ export const TicketForm = () => {
 				ticketStatus: ticket.ticketStatus.id
 			})
 		}
-	}, [board.showModal])
+		else {
+			setForm(defaultForm)	
+		}
+	}, [board.showModal, board.currentCell])
 
 	const onSubmit = () => {
 		const status = board.statuses.find((status) => status.id === form.ticketStatus)
