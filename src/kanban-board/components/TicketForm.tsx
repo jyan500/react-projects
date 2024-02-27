@@ -60,6 +60,17 @@ export const TicketForm = () => {
 					<label className = "text-label">Name</label>
 					<input onChange = {(e) => setForm({...form, ticketName: e.target.value})} value = {form.ticketName} type = "text"/>
 				</div>
+				{form.id !== "" && (
+					<div className = "form-input">
+						<label className = "">Status</label>
+						<select value = {form.ticketStatus} onChange = {(e) => setForm({...form, ticketStatus: e.target.value})}>
+							<option disabled value = "">---</option>
+							{board.statuses.filter((status) => board.statusesToDisplay.includes(status.id)).map((status) => {
+								return <option key = {status.id} value = {status.id}>{status.name}</option>
+							})}
+						</select>	
+					</div>
+				)}
 				<div className = "form-input">
 					<label className = "text-label">Description</label>
 					<textarea onChange = {(e) => setForm({...form, ticketDescription: e.target.value})}  value = {form.ticketDescription} ></textarea>

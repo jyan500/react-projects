@@ -85,14 +85,42 @@ export const boardSlice = createSlice({
 
 		},
 		editTicket(state, action: PayloadAction<Ticket>){
-			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
+			const { board, numCols, numRows, statuses, statusesToDisplay } = state
 			// edit the ticket within the tickets list
-			state.tickets[ticketIndex] = action.payload
 			const colNum = state.currentCell?.colNum
 			const rowNum = state.currentCell?.rowNum
-			if (rowNum != null && colNum != null){
-				state.board[rowNum][colNum].ticket = action.payload	
+			// if the status is different than before
+			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
+			if (action.payload.ticketStatus.id !== state.tickets[ticketIndex].ticketStatus.id){
+				// find the column that the new status belongs to	
+				const newStatus = statuses.find(status => status.id === action.payload.ticketStatus.id)	
+				if (newStatus){
+					const newStatusIndex = statusesToDisplay.indexOf(newStatus.id)
+					let found = false
+					for (let i = 0; i < numRows; ++i){
+						found = true 
+						board[i][newStatusIndex].ticket = action.payload
+						break
+					}
+					if (!found){
+						board.push(createNewRow(numRows, numCols))
+						board[numRows][newStatusIndex].ticket = action.payload
+						++state.numRows
+					}
+					// remove the ticket from the currently selected cell 
+					if (rowNum != null && colNum != null){
+						board[rowNum][colNum].ticket = null
+					}
+
+				}
 			}
+			else {
+				if (rowNum != null && colNum != null){
+					board[rowNum][colNum].ticket = action.payload	
+				}
+			}
+			// edit the ticket within the ticket list
+			state.tickets[ticketIndex] = action.payload
 		}
 	}
 })
