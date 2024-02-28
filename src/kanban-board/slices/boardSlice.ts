@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { createNewRow, setupInitialBoard } from "../helpers/functions" 
+import { createNewRow, setupInitialBoard, prioritySort } from "../helpers/functions" 
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
 import type { Cell, Board, Priority, Status, Ticket } from "../types/common" 
@@ -61,15 +61,15 @@ export const boardSlice = createSlice({
 			tickets.push(action.payload)
 			// all tickets start as to-do, and should be added in the to-do column
 			// if it exists
-			const toDo = statuses.find(status => status.name === "To-Do")
-			if (toDo){
-				const toDoIndex = statusesToDisplay.indexOf(toDo.id)
+			const status = statuses.find(status => status.id === action.payload.ticketStatus.id)
+			if (status){
+				const statusIndex = statusesToDisplay.indexOf(status.id)
 				// find the first available row in the todo column
 				let found = false
 				for (let i = 0; i < numRows; ++i){
-					if (!board[i][toDoIndex].ticket){
+					if (!board[i][statusIndex].ticket){
 						found = true
-						board[i][toDoIndex].ticket = action.payload
+						board[i][statusIndex].ticket = action.payload
 						break
 					}
 				}
@@ -77,7 +77,7 @@ export const boardSlice = createSlice({
 				if (!found){
 					board.push(createNewRow(numRows, numCols))
 					// add the ticket to the new row
-					board[numRows][toDoIndex].ticket = action.payload
+					board[numRows][statusIndex].ticket = action.payload
 					// increase the number of rows 
 					++state.numRows
 				}
@@ -98,9 +98,11 @@ export const boardSlice = createSlice({
 					const newStatusIndex = statusesToDisplay.indexOf(newStatus.id)
 					let found = false
 					for (let i = 0; i < numRows; ++i){
-						found = true 
-						board[i][newStatusIndex].ticket = action.payload
-						break
+						if (!board[i][newStatusIndex].ticket){
+							found = true 
+							board[i][newStatusIndex].ticket = action.payload
+							break
+						}
 					}
 					if (!found){
 						board.push(createNewRow(numRows, numCols))
@@ -121,9 +123,46 @@ export const boardSlice = createSlice({
 			}
 			// edit the ticket within the ticket list
 			state.tickets[ticketIndex] = action.payload
+		},
+		/*
+		Sort by columns,
+		1) either by all columns if no status Id is provided, OR 
+		by a specific column
+		Within each column, specify 1 to sort by highest to lowest priority
+		or 0 for lowest to highest priority
+		*/
+		sortByPriority(state, action: PayloadAction<{statusId?: string, sortOrder: number}>){
+			const {board, numCols, numRows, statuses, statusesToDisplay} = state 
+			const status = statuses.find(status => status.id === action.payload.statusId)	
+			if (status){
+				const statusIndex = statusesToDisplay.indexOf(status.id)
+				let cells: Array<Cell> = []
+				for (let i = 0; i < numRows; ++i){
+					const cell = board[i][statusIndex]
+					if (cell.ticket){
+						cells.push(cell)
+					}
+				}
+				console.log("cells: ", cells)
+				let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
+			}
+			else {
+				// sort every column on the board by each cell's priority
+				for (let i = 0; i < numCols; ++i){
+					let cells: Array<Cell> = []
+					for (let j = 0; j < numRows; ++j){
+						console.log(board[j])
+						let cell = board[j][i]
+						if (cell.ticket){
+							cells.push(cell)
+						}
+					}
+					let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
+				}
+			}
 		}
 	}
 })
 
-export const { addTicketToBoard, editTicket, selectCurrentCell, toggleShowModal } = boardSlice.actions
+export const { addTicketToBoard, editTicket, selectCurrentCell, sortByPriority, toggleShowModal } = boardSlice.actions
 export const boardReducer = boardSlice.reducer 

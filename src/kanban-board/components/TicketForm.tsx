@@ -3,6 +3,7 @@ import "../../common/styles/common.css"
 import { useAppDispatch, useAppSelector } from "../../redux-hooks"
 import { addTicketToBoard, selectCurrentCell, editTicket, toggleShowModal } from "../slices/boardSlice"
 import { v4 as uuidv4 } from "uuid" 
+import type { Status, Priority } from "../types/common"
 
 export const TicketForm = () => {
 	const dispatch = useAppDispatch()
@@ -34,8 +35,8 @@ export const TicketForm = () => {
 	}, [board.showModal, board.currentCell])
 
 	const onSubmit = () => {
-		const status = board.statuses.find((status) => status.id === form.ticketStatus)
-		const priority = board.priorityList.find((priority) => priority.id === form.priority)
+		const status = board.statuses.find((status: Status) => status.id === form.ticketStatus)
+		const priority = board.priorityList.find((priority: Priority) => priority.id === form.priority)
 		if (priority && status){
 			if (form.id === ""){
 				dispatch(addTicketToBoard({
@@ -63,17 +64,14 @@ export const TicketForm = () => {
 					<label className = "text-label">Name</label>
 					<input onChange = {(e) => setForm({...form, ticketName: e.target.value})} value = {form.ticketName} type = "text"/>
 				</div>
-				{form.id !== "" && (
-					<div className = "form-input">
-						<label className = "">Status</label>
-						<select value = {form.ticketStatus} onChange = {(e) => setForm({...form, ticketStatus: e.target.value})}>
-							<option disabled value = "">---</option>
-							{board.statuses.filter((status) => board.statusesToDisplay.includes(status.id)).map((status) => {
-								return <option key = {status.id} value = {status.id}>{status.name}</option>
-							})}
-						</select>	
-					</div>
-				)}
+				<div className = "form-input">
+					<label className = "">Status</label>
+					<select value = {form.ticketStatus} onChange = {(e) => setForm({...form, ticketStatus: e.target.value})}>
+						{board.statuses.filter((status: Status) => board.statusesToDisplay.includes(status.id)).map((status: Status) => {
+							return <option key = {status.id} value = {status.id}>{status.name}</option>
+						})}
+					</select>	
+				</div>
 				<div className = "form-input">
 					<label className = "text-label">Description</label>
 					<textarea onChange = {(e) => setForm({...form, ticketDescription: e.target.value})}  value = {form.ticketDescription} ></textarea>
@@ -82,7 +80,7 @@ export const TicketForm = () => {
 					<label className = "">Priority</label>
 					<select value = {form.priority} onChange = {(e) => setForm({...form, priority: e.target.value})}>
 						<option disabled value = "">---</option>
-						{board.priorityList.map((priority) => {
+						{board.priorityList.map((priority: Priority) => {
 							return <option key = {priority.id} value = {priority.id}>{priority.name}</option>
 						})}
 					</select>
