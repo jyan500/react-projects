@@ -11,6 +11,7 @@ export const Ticket = ({ticket}: PropType) => {
 	return (
 		<div className = "ticket-card">
 			<div>
+				<p>id: {ticket.id} </p>
 				<p>Ticket: {ticket.ticketName}</p>	
 				<p>Status: {ticket.ticketStatus.name}</p>	
 				<p>Priority: {ticket.priority.name}</p>	

@@ -44,6 +44,11 @@
 	margin-right: 4px;
 }
 
+.alert{
+	border: 1px solid red;
+	background-color: red;
+}
+
 .form-container {
 	display: flex;
 	flex-direction: column;

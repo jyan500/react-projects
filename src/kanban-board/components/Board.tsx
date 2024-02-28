@@ -1,6 +1,6 @@
 import React from "react"
 import { useAppSelector, useAppDispatch } from "../../redux-hooks" 
-import { toggleShowModal, sortByPriority } from "../slices/boardSlice"
+import { deleteAllTickets, toggleShowModal, sortByPriority } from "../slices/boardSlice"
 import { Cell } from "./Cell" 
 import "../../common/styles/common.css" 
 import "../styles/board.css"
@@ -16,6 +16,7 @@ export const Board = () => {
 			<div className = "btn-row">
 				<button onClick = {() => dispatch(toggleShowModal(true))} className = "btn">Add Ticket</button>
 				<button onClick = {() => dispatch(sortByPriority({sortOrder: 1}))} className = "btn">Sort By Priority</button>
+				<button onClick = {() => dispatch(deleteAllTickets())} className = "btn alert">Delete All Tickets</button>
 			</div>
 			<table>
 				<thead>

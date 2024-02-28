@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, current } from "@reduxjs/toolkit"
 import { createNewRow, setupInitialBoard, prioritySort } from "../helpers/functions" 
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
@@ -143,7 +143,6 @@ export const boardSlice = createSlice({
 						cells.push(cell)
 					}
 				}
-				console.log("cells: ", cells)
 				let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
 			}
 			else {
@@ -151,18 +150,36 @@ export const boardSlice = createSlice({
 				for (let i = 0; i < numCols; ++i){
 					let cells: Array<Cell> = []
 					for (let j = 0; j < numRows; ++j){
-						console.log(board[j])
-						let cell = board[j][i]
+						// need to make a copy instead of reference to avoid
+						// the sortedCells from changing after mutating the array
+						let cell = {...board[j][i]}
 						if (cell.ticket){
 							cells.push(cell)
 						}
 					}
 					let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
+					let col: Cell[] = []
+					// starting from 0, 0, 0, 1, etc 
+					// reset the ticket values for each cell to be the sorted order
+					for (let k = 0; k < numRows; ++k){
+						board[k][i].ticket = k < sortedCells.length ? sortedCells[k].ticket : null
+					}
 				}
 			}
+		},
+		deleteAllTickets(state){
+			const {board, numRows, numCols} = state
+			// set null to all tickets on the board
+			for (let i = 0; i < numRows; ++i){
+				for (let j = 0; j < numCols; ++j){
+					board[i][j].ticket = null
+				}
+			}
+			// delete all tickets in the ticket list
+			state.tickets = []
 		}
 	}
 })
 
-export const { addTicketToBoard, editTicket, selectCurrentCell, sortByPriority, toggleShowModal } = boardSlice.actions
+export const { addTicketToBoard, deleteAllTickets, editTicket, selectCurrentCell, sortByPriority, toggleShowModal } = boardSlice.actions
 export const boardReducer = boardSlice.reducer 
