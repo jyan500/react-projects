@@ -3,6 +3,7 @@ import { createNewRow, setupInitialBoard, prioritySort } from "../helpers/functi
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
 import type { Cell, Board, Priority, Status, Ticket } from "../types/common" 
+import { modalTypes } from "../helpers/constants" 
 
 interface BoardState {
 	board: Cell[][]
@@ -13,6 +14,7 @@ interface BoardState {
 	priorityList: Array<Priority>
 	showModal: boolean
 	currentCell: Cell | null
+	currentModalType: keyof typeof modalTypes
 	tickets: Array<Ticket>
 }
 
@@ -37,6 +39,7 @@ const initialState: BoardState = {
 	],
 	tickets: [],
 	showModal: false,
+	currentModalType: "TICKET_FORM",
 	currentCell: null
 }
 
@@ -47,8 +50,10 @@ export const boardSlice = createSlice({
 		toggleShowModal(state, action: PayloadAction<boolean>){
 			state.showModal = action.payload
 		},
+		setModalType(state, action: PayloadAction<keyof typeof modalTypes>){
+			state.currentModalType = action.payload	
+		},
 		selectCurrentCell(state, action: PayloadAction<Cell | null>){
-			console.log(action.payload)
 			state.currentCell = action.payload
 		},
 		addTicketToBoard(state, action: PayloadAction<Ticket>){
@@ -92,8 +97,6 @@ export const boardSlice = createSlice({
 			const rowNum = state.currentCell?.rowNum
 			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
 			// if the status is different than before
-			console.log("rowNum: ", rowNum)
-			console.log("colNum: ", colNum)
 			if (action.payload.ticketStatus.id !== state.tickets[ticketIndex].ticketStatus.id){
 				// find the column that the new status belongs to	
 				const newStatus = statuses.find(status => status.id === action.payload.ticketStatus.id)	
@@ -102,7 +105,6 @@ export const boardSlice = createSlice({
 					let found = false
 					for (let i = 0; i < numRows; ++i){
 						if (!board[i][newStatusIndex].ticket){
-							console.log("i, index: ", i, newStatusIndex)
 							found = true 
 							board[i][newStatusIndex].ticket = action.payload
 							break
@@ -198,5 +200,13 @@ export const boardSlice = createSlice({
 	}
 })
 
-export const { addTicketToBoard, deleteAllTickets, editTicket, selectCurrentCell, sortByPriority, toggleShowModal } = boardSlice.actions
+export const { 
+	addTicketToBoard, 
+	deleteAllTickets, 
+	editTicket, 
+	selectCurrentCell, 
+	setModalType, 
+	sortByPriority, 
+	toggleShowModal 
+} = boardSlice.actions
 export const boardReducer = boardSlice.reducer 
