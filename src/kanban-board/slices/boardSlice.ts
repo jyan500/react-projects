@@ -48,6 +48,7 @@ export const boardSlice = createSlice({
 			state.showModal = action.payload
 		},
 		selectCurrentCell(state, action: PayloadAction<Cell | null>){
+			console.log(action.payload)
 			state.currentCell = action.payload
 		},
 		addTicketToBoard(state, action: PayloadAction<Ticket>){
@@ -89,8 +90,10 @@ export const boardSlice = createSlice({
 			// edit the ticket within the tickets list
 			const colNum = state.currentCell?.colNum
 			const rowNum = state.currentCell?.rowNum
-			// if the status is different than before
 			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
+			// if the status is different than before
+			console.log("rowNum: ", rowNum)
+			console.log("colNum: ", colNum)
 			if (action.payload.ticketStatus.id !== state.tickets[ticketIndex].ticketStatus.id){
 				// find the column that the new status belongs to	
 				const newStatus = statuses.find(status => status.id === action.payload.ticketStatus.id)	
@@ -99,6 +102,7 @@ export const boardSlice = createSlice({
 					let found = false
 					for (let i = 0; i < numRows; ++i){
 						if (!board[i][newStatusIndex].ticket){
+							console.log("i, index: ", i, newStatusIndex)
 							found = true 
 							board[i][newStatusIndex].ticket = action.payload
 							break
@@ -112,6 +116,16 @@ export const boardSlice = createSlice({
 					// remove the ticket from the currently selected cell 
 					if (rowNum != null && colNum != null){
 						board[rowNum][colNum].ticket = null
+						// shift the cells from each row below the selected Cell upwards
+						for (let i = rowNum+1; i < numRows; ++i){
+							if (board[i][colNum].ticket){
+								let ticketCopy = {...board[i][colNum].ticket} as Ticket
+								board[i-1][colNum].ticket = ticketCopy 
+							}
+							else {
+								board[i-1][colNum].ticket = null
+							}
+						}
 					}
 
 				}
@@ -138,12 +152,15 @@ export const boardSlice = createSlice({
 				const statusIndex = statusesToDisplay.indexOf(status.id)
 				let cells: Array<Cell> = []
 				for (let i = 0; i < numRows; ++i){
-					const cell = board[i][statusIndex]
+					const cell = {...board[i][statusIndex]}
 					if (cell.ticket){
 						cells.push(cell)
 					}
 				}
 				let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
+				for (let k = 0; k < numRows; ++k){
+					board[k][statusIndex].ticket = k < sortedCells.length ? sortedCells[k].ticket : null
+				}
 			}
 			else {
 				// sort every column on the board by each cell's priority
