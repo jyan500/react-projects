@@ -26,4 +26,5 @@ export interface Board {
 export interface Status {
 	id: string  
 	name: string
+	order: number
 }
