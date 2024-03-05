@@ -1,4 +1,4 @@
-import type { Cell, Ticket } from "../types/common"
+import type { Board, Cell, Status, Ticket } from "../types/common"
 import { v4 as uuidv4 } from "uuid"
 
 export const setupInitialBoard = (numRows: number, numCols: number) => {	
@@ -19,6 +19,18 @@ export const setupInitialBoard = (numRows: number, numCols: number) => {
 	return board
 }
 
+/* 
+New Design:
+Map each status id to an array, which represents all tickets for this column
+*/
+export const setupNewInitialBoard = (statuses: Array<Status>, numRows: number) => {
+	let board: Board = {}
+	for (let i = 0; i < statuses.length; ++i){
+		board[statuses[i].id] = []
+	}
+	return board
+}
+
 export const createNewRow = (rowNum: number, numCols: number) => {
 	let row: Cell[] = []
 	for (let i = 0; i < numCols; ++i){
@@ -31,25 +43,37 @@ export const createNewRow = (rowNum: number, numCols: number) => {
 		row.push(cell)
 	}
 	return row
-
 }
 
-// sort an array of cells (that contain tickets) by 
-// the priority of the ticket
-export const prioritySort = (cells: Array<Cell>) => {
-	const sortKey = (a: Cell, b: Cell) => {
-		if (a.ticket && b.ticket){
-			if (a.ticket.priority.order < b.ticket.priority.order){
+export const prioritySort = (tickets: Array<Ticket>) => {
+	const sortKey = (a: Ticket, b: Ticket) => {
+		if (a && b){
+			if (a.priority.order < b.priority.order){
 				return -1
 			}
-			else if (a.ticket.priority.order > b.ticket.priority.order){
+			else if (a.priority.order > b.priority.order){
 				return 1
 			}
 			else {
 				return 0
 			}
-		}
+		}	
 		return 0
 	}	
-	return cells.sort(sortKey)
+	return tickets.sort(sortKey)
 }
+
+export const sortStatusByOrder = (a: Status, b: Status) => {
+	if (a.order < b.order){
+		return -1
+	}
+	else if (a.order > b.order){
+		return 1
+	}
+	else {
+		return 0
+	}
+}
+
+
+

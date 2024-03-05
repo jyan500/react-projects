@@ -1,46 +1,45 @@
 import { createSlice, current } from "@reduxjs/toolkit"
-import { createNewRow, setupInitialBoard, prioritySort } from "../helpers/functions" 
+import { createNewRow, setupInitialBoard, setupNewInitialBoard, prioritySort } from "../helpers/functions" 
 import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../store"
 import type { Cell, Board, Priority, Status, Ticket } from "../types/common" 
-import { modalTypes } from "../helpers/constants" 
+import { 
+	defaultPriorities, 
+	defaultRows, 
+	defaultStatuses, 
+	defaultStatusesToDisplay, 
+} from "../helpers/constants" 
+import { v4 as uuidv4 } from "uuid" 
+import { modalTypes } from "../components/Modal"
 
 interface BoardState {
 	board: Cell[][]
+	newBoard: Board 
 	numRows: number
 	numCols: number
 	statuses: Array<Status>
-	statusesToDisplay: Array<string>
+	statusesToDisplay: Array<String>
 	priorityList: Array<Priority>
 	showModal: boolean
-	currentCell: Cell | null
+	currentTicketId: string | null
 	currentModalType: keyof typeof modalTypes
+	currentModalProps: Record<string, any>
 	tickets: Array<Ticket>
 }
 
 const initialState: BoardState = {
 	board: setupInitialBoard(4, 4),
+	newBoard: setupNewInitialBoard(defaultStatuses, defaultRows),
 	numCols: 4,
-	numRows: 4,
-	statusesToDisplay: ["1","2","3","4"],
-	statuses: [
-		{id: "1", name: "To-Do", order: 1}, 
-		{id: "2", name: "In Progress", order: 2}, 
-		{id: "3", name: "Code Complete", order: 3},
-		{id: "4", name: "On Test", order: 4},
-		{id: "5", name: "Staging", order: 5},
-		{id: "6", name: "Released", order: 6},
-		{id: "7", name: "Closed", order: 7},
-	],
-	priorityList: [
-		{id: "1", name: "High", order: 1},
-		{id: "2", name: "Medium", order: 2},
-		{id: "3", name: "Low", order: 3},
-	],
+	numRows: defaultRows,
+	statusesToDisplay: defaultStatusesToDisplay,
+	statuses: defaultStatuses,
+	priorityList: defaultPriorities, 
 	tickets: [],
 	showModal: false,
 	currentModalType: "TICKET_FORM",
-	currentCell: null
+	currentModalProps: {},
+	currentTicketId: null
 }
 
 export const boardSlice = createSlice({
@@ -53,92 +52,48 @@ export const boardSlice = createSlice({
 		setModalType(state, action: PayloadAction<keyof typeof modalTypes>){
 			state.currentModalType = action.payload	
 		},
-		selectCurrentCell(state, action: PayloadAction<Cell | null>){
-			state.currentCell = action.payload
+		setModalProps(state, action: PayloadAction<Record<string, any>>){
+			state.currentModalProps = action.payload
+		},
+		selectCurrentTicketId(state, action: PayloadAction<string | null>){
+			state.currentTicketId = action.payload
 		},
 		addTicketToBoard(state, action: PayloadAction<Ticket>){
-			const { 
-				board, 
-				numCols,
-				numRows, 
-				statuses, 
-				statusesToDisplay, tickets 
+			// TODO: rename newBoard to board
+			const {
+				newBoard, statuses, statusesToDisplay, tickets
 			} = state
-			tickets.push(action.payload)
-			// all tickets start as to-do, and should be added in the to-do column
-			// if it exists
 			const status = statuses.find(status => status.id === action.payload.ticketStatus.id)
 			if (status){
-				const statusIndex = statusesToDisplay.indexOf(status.id)
-				// find the first available row in the todo column
-				let found = false
-				for (let i = 0; i < numRows; ++i){
-					if (!board[i][statusIndex].ticket){
-						found = true
-						board[i][statusIndex].ticket = action.payload
-						break
-					}
-				}
-				// if row is not found, add a new row
-				if (!found){
-					board.push(createNewRow(numRows, numCols))
-					// add the ticket to the new row
-					board[numRows][statusIndex].ticket = action.payload
-					// increase the number of rows 
-					++state.numRows
-				}
+				newBoard[status.id].push(action.payload)	
 			}
+			tickets.push(action.payload)
 
 		},
 		editTicket(state, action: PayloadAction<Ticket>){
-			const { board, numCols, numRows, statuses, statusesToDisplay } = state
+			const { newBoard, statuses, statusesToDisplay } = state
 			// edit the ticket within the tickets list
-			const colNum = state.currentCell?.colNum
-			const rowNum = state.currentCell?.rowNum
 			let ticketIndex = state.tickets.findIndex((ticket) => action.payload.id === ticket.id)
-			// if the status is different than before
-			if (action.payload.ticketStatus.id !== state.tickets[ticketIndex].ticketStatus.id){
+			let originalTicket = state.tickets[ticketIndex]
+			if (action.payload.ticketStatus.id !== originalTicket.ticketStatus.id){
 				// find the column that the new status belongs to	
 				const newStatus = statuses.find(status => status.id === action.payload.ticketStatus.id)	
 				if (newStatus){
-					const newStatusIndex = statusesToDisplay.indexOf(newStatus.id)
-					let found = false
-					for (let i = 0; i < numRows; ++i){
-						if (!board[i][newStatusIndex].ticket){
-							found = true 
-							board[i][newStatusIndex].ticket = action.payload
-							break
-						}
-					}
-					if (!found){
-						board.push(createNewRow(numRows, numCols))
-						board[numRows][newStatusIndex].ticket = action.payload
-						++state.numRows
-					}
-					// remove the ticket from the currently selected cell 
-					if (rowNum != null && colNum != null){
-						board[rowNum][colNum].ticket = null
-						// shift the cells from each row below the selected Cell upwards
-						for (let i = rowNum+1; i < numRows; ++i){
-							if (board[i][colNum].ticket){
-								let ticketCopy = {...board[i][colNum].ticket} as Ticket
-								board[i-1][colNum].ticket = ticketCopy 
-							}
-							else {
-								board[i-1][colNum].ticket = null
-							}
-						}
-					}
-
+					// add the ticket to the respective status column
+					newBoard[newStatus.id].push(action.payload)
+					// remove the ticket from the column 
+					let oldTicketIndex = newBoard[originalTicket.ticketStatus.id]?.findIndex((t: Ticket) => t.id === originalTicket.id)
+					newBoard[originalTicket.ticketStatus.id]?.splice(oldTicketIndex, 1)
 				}
 			}
 			else {
-				if (rowNum != null && colNum != null){
-					board[rowNum][colNum].ticket = action.payload	
-				}
+				// find the ticket within the board via its index and replace
+				const ticketsForStatus = newBoard[action.payload.ticketStatus.id]
+				const ticketToEditIndex = ticketsForStatus.findIndex((ticket) => ticket.id === action.payload.id)
+				newBoard[action.payload.ticketStatus.id][ticketToEditIndex] = action.payload
 			}
-			// edit the ticket within the ticket list
 			state.tickets[ticketIndex] = action.payload
+
 		},
 		/*
 		Sort by columns,
@@ -148,54 +103,32 @@ export const boardSlice = createSlice({
 		or 0 for lowest to highest priority
 		*/
 		sortByPriority(state, action: PayloadAction<{statusId?: string, sortOrder: number}>){
-			const {board, numCols, numRows, statuses, statusesToDisplay} = state 
-			const status = statuses.find(status => status.id === action.payload.statusId)	
+			const { newBoard, statuses, statusesToDisplay } = state
+			const status = statuses.find(status => status.id === action.payload.statusId)
 			if (status){
-				const statusIndex = statusesToDisplay.indexOf(status.id)
-				let cells: Array<Cell> = []
-				for (let i = 0; i < numRows; ++i){
-					const cell = {...board[i][statusIndex]}
-					if (cell.ticket){
-						cells.push(cell)
-					}
-				}
-				let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
-				for (let k = 0; k < numRows; ++k){
-					board[k][statusIndex].ticket = k < sortedCells.length ? sortedCells[k].ticket : null
-				}
+				prioritySort(newBoard[status.id])
 			}
 			else {
-				// sort every column on the board by each cell's priority
-				for (let i = 0; i < numCols; ++i){
-					let cells: Array<Cell> = []
-					for (let j = 0; j < numRows; ++j){
-						// need to make a copy instead of reference to avoid
-						// the sortedCells from changing after mutating the array
-						let cell = {...board[j][i]}
-						if (cell.ticket){
-							cells.push(cell)
-						}
-					}
-					let sortedCells = action.payload.sortOrder === 1 ? prioritySort(cells) : prioritySort(cells).reverse()
-					let col: Cell[] = []
-					// starting from 0, 0, 0, 1, etc 
-					// reset the ticket values for each cell to be the sorted order
-					for (let k = 0; k < numRows; ++k){
-						board[k][i].ticket = k < sortedCells.length ? sortedCells[k].ticket : null
-					}
-				}
+				Object.keys(newBoard).forEach((statusId) => {
+					prioritySort(newBoard[statusId])
+				})	
 			}
 		},
 		deleteAllTickets(state){
-			const {board, numRows, numCols} = state
-			// set null to all tickets on the board
-			for (let i = 0; i < numRows; ++i){
-				for (let j = 0; j < numCols; ++j){
-					board[i][j].ticket = null
+			const {newBoard, statuses, numRows, numCols} = state
+			for (let i = 0; i < statuses.length; ++i){
+				if (statuses[i].id in newBoard){
+					newBoard[statuses[i].id] = []
 				}
 			}
 			// delete all tickets in the ticket list
 			state.tickets = []
+		},
+		updateStatuses(state, action: PayloadAction<Array<Status>>){
+			state.statuses = action.payload
+		},
+		updateStatusesToDisplay(state, action: PayloadAction<Array<String>>){
+			state.statusesToDisplay = action.payload
 		}
 	}
 })
@@ -204,9 +137,12 @@ export const {
 	addTicketToBoard, 
 	deleteAllTickets, 
 	editTicket, 
-	selectCurrentCell, 
+	selectCurrentTicketId, 
 	setModalType, 
+	setModalProps,
 	sortByPriority, 
+	updateStatuses,
+	updateStatusesToDisplay,
 	toggleShowModal 
 } = boardSlice.actions
 export const boardReducer = boardSlice.reducer 

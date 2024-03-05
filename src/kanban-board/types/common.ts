@@ -14,13 +14,13 @@ export interface Ticket {
 
 export interface Cell {
 	id: string 
-	rowNum: number
-	colNum: number
+	rowNum?: number
+	colNum?: number
 	ticket: Ticket | null
 }
 
 export interface Board {
-	cells: Array<Cell>
+	[statusId: string]: Array<Ticket>
 }
 
 export interface Status {

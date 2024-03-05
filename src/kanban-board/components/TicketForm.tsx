@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import "../../common/styles/common.css" 
 import { useAppDispatch, useAppSelector } from "../../redux-hooks"
-import { addTicketToBoard, selectCurrentCell, editTicket, toggleShowModal } from "../slices/boardSlice"
+import { addTicketToBoard, selectCurrentTicketId, editTicket, toggleShowModal } from "../slices/boardSlice"
 import { v4 as uuidv4 } from "uuid" 
-import type { Status, Priority } from "../types/common"
+import type { Status, Ticket, Priority } from "../types/common"
 
 export const TicketForm = () => {
 	const dispatch = useAppDispatch()
@@ -21,8 +21,8 @@ export const TicketForm = () => {
 
 	useEffect(() => {
 		// initialize with current values if the ticket exists
-		if (board.currentCell?.ticket){
-			let ticket = board.currentCell.ticket
+		if (board.currentTicketId){
+			const ticket = board.tickets.find((ticket: Ticket) => ticket.id === board.currentTicketId)
 			setForm({
 				...ticket,
 				priority: ticket.priority.id,
@@ -50,7 +50,7 @@ export const TicketForm = () => {
 				dispatch(editTicket({...form, priority: priority, ticketStatus: status}))	
 			}
 			dispatch(toggleShowModal(false))
-			dispatch(selectCurrentCell(null))
+			dispatch(selectCurrentTicketId(null))
 			setForm(defaultForm)
 		}
 	}

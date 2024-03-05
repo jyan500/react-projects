@@ -1,22 +1,45 @@
 import React, {ReactNode} from "react"
 import { IoMdClose } from "react-icons/io";
 import "../../common/styles/modal.css"
-import { toggleShowModal, selectCurrentCell, setModalType } from "../slices/boardSlice"
-import { modalTypes } from "../helpers/constants" 
+import { toggleShowModal, selectCurrentTicketId } from "../slices/boardSlice"
+import { TicketForm } from "./TicketForm" 
+import { StatusForm } from "./StatusForm" 
 import { useAppDispatch, useAppSelector } from "../../redux-hooks" 
+
+export const modalTypes = {
+	"TICKET_FORM": TicketForm,
+	"STATUS_FORM": StatusForm,
+}
+
+// type for partial subset of keys
+type PartialKeys<T> = Partial<{ [K in keyof T]: Record<string, any>}>
 
 export const Modal = () => {
 	const dispatch = useAppDispatch()
 	const board = useAppSelector((state) => state.board)
 	const ModalContent = modalTypes[board.currentModalType as keyof typeof modalTypes] 
+
+	// define modal handlers type as the partial subset of all keys of modal types
+	const modalHandlers: PartialKeys<typeof modalTypes> = {
+		"TICKET_FORM": {
+			dismissHandler: () => {
+				dispatch(toggleShowModal(false))
+				dispatch(selectCurrentTicketId(null))
+			}
+		},
+	} 
+
 	return (
 		<div className = {`overlay ${board.showModal ? "visible": "hidden"}`}>
 			<div className = "modal-container">
 				<button onClick={
 					() => {
-						dispatch(toggleShowModal(false))
-						dispatch(setModalType("TICKET_FORM"))
-						dispatch(selectCurrentCell(null))
+						if (modalHandlers[board.currentModalType as keyof typeof modalHandlers]?.dismissHandler){
+							modalHandlers[board.currentModalType as keyof typeof modalHandlers]?.dismissHandler()
+						}
+						else {
+							dispatch(toggleShowModal(false))
+						}
 					}
 				}
 				>
