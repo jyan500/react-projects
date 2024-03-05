@@ -106,11 +106,11 @@ export const boardSlice = createSlice({
 			const { newBoard, statuses, statusesToDisplay } = state
 			const status = statuses.find(status => status.id === action.payload.statusId)
 			if (status){
-				prioritySort(newBoard[status.id])
+				action.payload.sortOrder === 1 ? prioritySort(newBoard[status.id]) : prioritySort(newBoard[status.id]).reverse()
 			}
 			else {
 				Object.keys(newBoard).forEach((statusId) => {
-					prioritySort(newBoard[statusId])
+					action.payload.sortOrder === 1 ? prioritySort(newBoard[statusId]) : prioritySort(newBoard[statusId]).reverse()
 				})	
 			}
 		},

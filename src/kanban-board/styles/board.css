@@ -32,6 +32,13 @@ table td {
 	background-color: #D3D3D3;
 }
 
+.grid-col-header {
+	display: flex;	
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .cell {
 	background-color: #D3D3D3;
 }

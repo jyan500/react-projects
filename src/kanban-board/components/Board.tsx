@@ -15,13 +15,14 @@ import { v4 as uuidv4 } from "uuid"
 import { Modal } from "./Modal" 
 import type { Cell as CellType, Status, Ticket as TicketType } from "../types/common"
 import { sortStatusByOrder } from "../helpers/functions" 
+import { IoIosArrowDown as ArrowDown, IoIosArrowUp as ArrowUp } from "react-icons/io";
 
 export const Board = () => {
 	const board = useAppSelector((state) => state.board)
 	const dispatch = useAppDispatch()
 	const boardStyle = {
 		"display": "grid",	
-		"gridTemplateColumns": `repeat(${board.statusesToDisplay.length}, auto)`,
+		"gridTemplateColumns": `repeat(${board.statusesToDisplay.length}, minmax(200px, 1fr))`,
 		"gridGap": "8px",
 		"width": "100%"
 }
@@ -44,7 +45,11 @@ export const Board = () => {
 					if (board.statusesToDisplay.includes(status.id)){
 						return (<div key = {status.id} className = "grid-col">
 							<div>
-								<p>{board.statuses.find((s: Status) => s.id === status.id)?.name}</p>
+								<div className = "grid-col-header">
+									<button onClick={() => dispatch(sortByPriority({sortOrder: 1, statusId: status.id}))}><ArrowUp/></button>
+									<p>{board.statuses.find((s: Status) => s.id === status.id)?.name}</p>
+									<button onClick={() => dispatch(sortByPriority({sortOrder: 0, statusId: status.id}))}><ArrowDown/></button>
+								</div>
 								{board.newBoard[status.id].map((ticket: TicketType) => {
 									return (
 										<div 
