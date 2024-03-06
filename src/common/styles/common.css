@@ -67,6 +67,16 @@
 	margin-bottom: 8px;
 }
 
+.form-input-inline {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.form-input-inline > input {
+	margin-left: 4px;
+}
+
 .form-input input {
 	border: 1px solid;
 }

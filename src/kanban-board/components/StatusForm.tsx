@@ -8,6 +8,7 @@ import { sortStatusByOrder } from "../helpers/functions"
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineArrowBackIosNew as ArrowBackward } from "react-icons/md"
 import { MdOutlineArrowForwardIos as ArrowForward } from "react-icons/md"
+import { v4 as uuidv4 } from "uuid"
 
 // change visible statuses
 // add custom statuses
@@ -24,6 +25,20 @@ export const StatusForm = () => {
 	}
 	const [form, setForm] = useState<FormType>(defaultForm)
 	const [selectedStatusId, setSelectedStatusId] = useState<String | null>(null)
+
+	const addStatus = () => {
+		const prevMaxOrder = Math.max(...form.statuses.map((status)=>status.order))
+		const newStatus: Status =  {
+			id: uuidv4(),
+			order: prevMaxOrder + 1,
+			name: "New Status"
+		}
+		setForm({
+			...form,
+			statuses: [...form.statuses, newStatus]
+		})
+		setSelectedStatusId(newStatus.id)
+	}
 
 	const onChangeName = (value: string) => {
 		const index = form.statuses.findIndex((status) => status.id === selectedStatusId)
@@ -113,7 +128,7 @@ export const StatusForm = () => {
 							<button onClick = {(e) => setOrder(selectedStatusId, false)}><ArrowForward /></button>
 						</div>
 						<div className = "status-col">
-							<div className = "form-input">
+							<div className = "form-input-inline">
 								<label>Is visible in table:</label>
 								<input type = "checkbox" onChange = {(e) => onCheck()} checked = {form.statusesToDisplay.includes(selectedStatusId)}/>
 							</div>
@@ -125,6 +140,7 @@ export const StatusForm = () => {
 					</>
 				: null}
 				<div className = "button-row">
+					<button className = "btn" onClick={addStatus}>Add Status</button>	
 					<button className = "btn" onClick={onSubmit}>Save Changes</button>	
 				</div>
 			</div>

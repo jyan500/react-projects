@@ -126,6 +126,12 @@ export const boardSlice = createSlice({
 		},
 		updateStatuses(state, action: PayloadAction<Array<Status>>){
 			state.statuses = action.payload
+			const currentStatuses = Object.keys(state.newBoard)
+			// create a new status column for the board if not present
+			const newStatuses = action.payload.filter((status) => !currentStatuses.includes(status.id))
+			newStatuses.forEach((status) => {
+				state.newBoard[status.id] = []
+			})
 		},
 		updateStatusesToDisplay(state, action: PayloadAction<Array<String>>){
 			state.statusesToDisplay = action.payload
